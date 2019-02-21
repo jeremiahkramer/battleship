@@ -1,0 +1,191 @@
+<#import "../layout/defaultLayout.ftl.html" as layout>
+<@layout.myLayout "Home page">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<link href="https://fonts.googleapis.com/css?family=Oswald" rel="stylesheet">
+<body>
+
+<h1><img id="title_banner" src="https://i.imgur.com/03vOZGu.png"></h1>
+
+
+<div id = "opponent_feedback" >
+    <h1 id = "opponent_feedback_title" > OPPONENT FEEDBACK </h1>
+
+    <p id = "opponent_miss_feedback" > Last Shot:  MISS. </p>
+    <p id = "opponent_hit_feedback" > Last Shot:  HIT. </p>
+    <p id = "opponent_sunk_feedback" > Last Shot:  Your Ship SUNK. </p>
+</div>
+
+<div id = "sonar_button_box">
+    <button id = "sonar_button"><img src="https://i.imgur.com/GNakJfq.gif" id="sonar_image" onclick="sonar_attack()"></button>
+</div>
+
+<div id = "move_fleet_box">
+    Click a button then click the Your Fleet map to move your fleet<br>
+    <button class="direction_button" id = "move_fleet_up"><img class="direction_img" src="https://i.imgur.com/MiuBqpa.png" id="up_image"></button>
+    <button class="direction_button" id = "move_fleet_right"><img class="direction_img" src="https://i.imgur.com/klFhkSM.png" id="right_image"></button>
+    <button class="direction_button" id = "move_fleet_down"><img class="direction_img" src="https://i.imgur.com/eA9B3sO.png" id="down_image"></button>
+    <button class="direction_button" id = "move_fleet_left"><img class="direction_img" src="https://i.imgur.com/FYsDRRg.png" id="left_image"></button>
+</div>
+    
+<div id = "code_input">
+    <p id = "actual_code"></p>
+    Enter Code: <input type="text" id = "code_input_box" placeholder="">
+    <button id="submit_code">Submit Code</button>
+</div>
+
+<div id = "result_modal_box" >
+    <h1 id = "end_modal_win_message" > YOU WON! </h1>
+    <h1 id = "end_modal_loss_message" > YOU LOST. </h1>
+    <h2 class = "modal_title">RESULTS</h2>
+
+    <div class="result_modal_content">
+        <p id="hit_numb"> </p>
+        <p id="sink_numb"> </p>
+        <button id="restart_button" type="submit" onclick="refreshPage()">PLAY AGAIN</button>
+    </div>
+
+</div>
+
+
+<div id="titles_container">
+    <div class="title", id="setup_title">PHASE: Ship Setup</div>
+
+    <div class="title", id="attack_title">PHASE: Attack!</div>
+</div>
+
+<div id="error_message_container">
+    <div class="error_message", id="placement_error">
+        <p>Error placing ship. Please make sure you:</p>
+        <p> 1) Have not already placed the ship type.</p>
+        <p> 2) Are not stacking the ships. </p>
+        <p> 3) Are placing the ship in the bounds of the game board. </p>
+        <p> 4) Have a ship selected. </p>
+    </div>
+    <div class="error_message", id="attacking_error">
+        Error attacking. Please make sure you are not attacking an already guessed location.
+    </div>
+</div>
+
+<div id="players_titles_container">
+    <div class="title", id="your_title">PLAYER BOARD</div>
+  
+
+    <div class="title", id="opponents_title">OPPONENT BOARD</div>
+</div>
+
+<table id="x_axis" class="axis">
+</table>
+
+<div class="dynamic_display", id="game_display">
+    <table id="y_axis" class="axis">
+    </table>
+
+    <table id="opponent" class="battleGrid">
+    </table>
+
+    <table id="player" class="battleGrid">
+    </table>
+</div>
+
+<!-- Set up the buttons to be images rather than words. It just looks cooler. -->
+<div class="buttons">
+    <div class="placing_buttons">Click the button of which ship you want to place!</div>
+    <div id="vert_box"><input type="checkbox" id="is_vertical">Vertical</input></div>
+    <div id="under_box"><input type="checkbox" id="is_under">Underwater</input></div>
+    <ul id="ship_setup_container">
+        <li class="bullet"><button id="place_minesweeper" class="ship_button_container"><img src="https://i.imgur.com/Oeytyaf.png" class="ship_buttons"></button></li>
+        <li class="bullet"><button id="place_destroyer" class="ship_button_container"><img src="https://i.imgur.com/wVHwGSf.png" class="ship_buttons"></button></li>
+        <li class="bullet"><button id="place_battleship" class="ship_button_container"><img src="https://i.imgur.com/kMlxgZ3.png" class="ship_buttons"></button></li>
+        <li class="bullet"><button id="place_submarine" class="ship_button_container"><img src="https://i.imgur.com/LfliVyV.png" class="ship_buttons"></button></li>
+    </ul>
+</div>
+
+<div id="attack_dashboard">
+    <div id="your_dashboard_title">
+        Your Fleet
+    </div>
+    <div id="ship_labels">
+        <!--ship labels will be generated here by game.js-->
+    </div>
+    <div id="players_fleet">
+        <!--ships will be generated here by game.js-->
+    </div>
+</div>
+
+<div id="your_fleet_label">
+    <p class="title">Your Fleet</p>
+</div>
+
+
+</body>
+
+<div id="move_to_attack_mode_prompt">
+    <div id="move_to_attack_mode_text">Man your ships and prepare for the Attack Phase!</div>
+
+    <br>
+    <button id="move_to_attack_mode_button"><div id="attack_button_text">READY</div></button>
+</div>
+
+<div class="instructions_button_box">
+    <button id="instructions_button" onclick="showInstructions()">HOW TO PLAY</button>
+</div>
+
+<div id="how_to_play_box">
+    <button id="x_button" type= "submit" onclick="hideInstructions()" >X</button>
+    <h1 id = "instructions_title">HOW TO PLAY</h1>
+    <h2 class = "instructions_sections">PREPARATION PHASE</h2>
+    <div class = "instructions_text">
+        To start the game, you must place 3 ships. You have a minesweeper (2 spaces),
+        a destroyer (3 spaces) and a battleship (4 spaces). Clicking on the buttons
+        will allow you to place the corresponding ships.
+    </div>
+    <h2 class = "instructions_sections">ATTACK PHASE</h2>
+    <div class = "instructions_text">
+        The goal of the attack phase is to sink enemy ships. Click on the boxes where you
+        think the enemy ships are placed. Whoever sinks all of the opponents ships first wins.
+    </div>
+    <h2 class = "instructions_sections">SPECIAL WEAPONS</h2>
+    <h2 class = "special_weapons_sections">CAPTAIN'S QUARTERS</h2>
+    <div class = "instructions_text">
+        Each ship has a hidden captain's quarters mechanic. If you hit this space, you'll
+        sink the entire ship. But watch out because this special space on each ship
+        that takes two hits to take on. The first will look like a miss so keep an eye out.
+    </div>
+    <h2 class = "special_weapons_sections">SONAR MISSILE</h2>
+    <div class = "instructions_text">
+        After you sink an enemy ship you will gain access to your sonar missiles. Shooting
+        one of these will allow you to see what lies in the splash zone of that area.
+        Remember though, you only have two sonar missiles per game. Make sure to make them count.
+    </div>
+    <h2 class = "instructions_sections">SUBMARINES</h2>
+    <div class = "instructions_text">
+        Submarines have the ability to go underwater. Unfortunately, your ships normal bombs
+        are unable to hit the submarine while it is there. Thankfully, once you sink a different
+        ship, you are automatically upgraded to the more powerful space laser. The space laser
+        replaces your bombs and gives you the ability to hit underwater.
+    </div>
+    <h2 class = "instructions_sections">MOVING THE FLEET</h2>
+    <div class = "instructions_text">
+        After you sink two opposing ships, the enemies may have an inkling of where your ships are. To fight
+        back, you have the ability to move your fleet. All you need to do is click one of the directional
+        buttons and then click on your fleet. However, you can only do this twice, so use it wisely.
+    </div>
+    <h2 class = "instructions_sections">ATTACK LEGEND </h2>
+    <div class = "instructions_text">
+        The following show the corresponding colors for each state of a space on the board.
+    </div>
+    <div id = "attack_legend_container">
+        <p class = "attack_legend" id="misskey">MISS </p>
+        <p class = "attack_legend" id="hitkey">HIT </p>
+        <p class = "attack_legend" id="sinkkey">SINK </p>
+    </div>
+    <div class = "instructions_link"> If you want to know more about battleship. Click <a href="http://www.battleshiponline.org/how-to-play-battleship.php">here</a>.</div>
+    <div id="close"><button id="close_button" type= "submit" onclick="hideInstructions()" >BACK TO GAME</button></div>
+</div>
+
+<script type="text/javascript" src="/assets/game.js"></script>
+<script>
+    initGame();
+</script>
+
+</@layout.myLayout>
